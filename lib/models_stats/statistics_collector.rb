@@ -18,6 +18,7 @@ module ModelsStats
                end
       models.each do |config|
         name, params = config.first
+        puts name, params if Rails.env.development?
         model = params["model"]
         group_by = params["group_by"]
         stat_alias = name
@@ -25,7 +26,7 @@ module ModelsStats
         datetime_attr = params["datetime_attr"]
         select_statement = params["select_statement"] || ModelsStats::Statistics::DEFAULT_SELECT_STATEMENT
 
-        stat_for_model = stat_for(model, group_by, datetime_attr, params[:conditions], select_statement)
+        stat_for_model = stat_for(model, group_by, datetime_attr, params["conditions"], select_statement)
 
         if stat_for_model.present?
           stat_for_model = if group_by.present?
@@ -79,6 +80,8 @@ module ModelsStats
       if conditions.present?
         model_scope = model_scope.where(conditions)
       end
+
+      puts model_scope.to_sql if Rails.env.development?
 
       model_scope
     end
