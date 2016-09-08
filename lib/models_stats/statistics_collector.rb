@@ -74,7 +74,8 @@ module ModelsStats
       end
 
       if datetime_attr.present?
-        model_scope = model_scope.where(datetime_attr => date.beginning_of_day..date.end_of_day)
+        model_scope = model_scope.where("date_trunc('day',#{datetime_attr}) = date_trunc('day',?::date)", date)
+        # model_scope = model_scope.where(datetime_attr => date.beginning_of_day..date.end_of_day)
       end
 
       if conditions.present?
